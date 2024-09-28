@@ -10,7 +10,7 @@ namespace Script
 {
     public class TimeService : MonoBehaviour
     {
-        readonly string getTimeRequestURL = "https://yandex.com/time/sync.json";
+        readonly string getTimeRequestURL = "https://thingproxy.freeboard.io/fetch/https://yandex.com/time/sync.json";
         private DateTime _currentTime;
         private DateTime lastUpdateTime;
         private float timeSinceLastTimeUpdate;
@@ -42,11 +42,13 @@ namespace Script
                 var requestStartTime = Time.realtimeSinceStartup;
 
                 using UnityWebRequest request = UnityWebRequest.Get(getTimeRequestURL);
+                request.SetRequestHeader("Access-Control-Allow-Origin", "*");
                 yield return request.SendWebRequest();
 
                 if (request.result == UnityWebRequest.Result.Success)
                 {
                     var json = request.downloadHandler.text;
+                    Debug.Log(json);
                     var timeResponse = JsonConvert.DeserializeObject<GetTimeDataResponse>(json);
                     if (timeResponse?.time == null)
                     {
